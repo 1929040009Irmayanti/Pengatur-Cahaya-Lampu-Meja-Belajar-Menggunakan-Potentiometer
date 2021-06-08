@@ -1,0 +1,47 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+//Library i2c dengan pinout SDA ke A4, SCL ke A5
+LiquidCrystal_I2C lcd(0x27, 20, 4);
+
+//Pin Data Potensio Meter ke A0
+byte sensor = A0;
+//Pin LED ke 9 PWM
+byte led = 9;
+
+int nilai;
+int output;
+
+void setup() {
+  lcd.init();
+  lcd.backlight();
+  pinMode(led, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  //  Nilai Potensio
+  nilai = analogRead(sensor);
+  //  Mapping potensio dari nilai 0 = 0, hingga 1023 = 10
+  output = map(nilai, 0, 1023, 0, 100);
+  Serial.println(nilai);
+
+  // Mengguakan led sebagai output
+  analogWrite(led, output);
+
+  //Perintah Print pada serial monitor (sensor: )
+  Serial.print("sensor: ");
+  //Perintah print pada LCD i2c
+  lcd.setCursor(0, 0);
+  lcd.print("Nilai: ");
+  //Perintah Print nilai pada serial monitor
+  Serial.print(nilai);
+  //Perintah print pada LCD i2c
+  lcd.setCursor(7, 1);
+  lcd.print(output);
+  Serial.print("  ");
+  Serial.print("output: ");
+  Serial.println(output);
+
+  delay(2);
+}
